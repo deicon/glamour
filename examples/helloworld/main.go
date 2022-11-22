@@ -7,7 +7,13 @@ import (
 )
 
 func main() {
-	eingang := `# Hello World
+	eingang := `---
+title: Frontmatter test
+version: 1.0.2
+description: Long Text with 
+   Line breaks
+---
+# Hello World
 
 This is a simple example of Markdown rendering with Glamour!
 Check out the [other examples](https://github.com/charmbracelet/glamour/tree/master/examples) too.

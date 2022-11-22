@@ -1,6 +1,7 @@
 package ansi
 
 import (
+	localast "github.com/charmbracelet/glamour/extension/ast"
 	"io"
 	"net/url"
 	"strings"
@@ -25,7 +26,8 @@ type Options struct {
 
 // ANSIRenderer renders markdown content as ANSI escaped sequences.
 type ANSIRenderer struct {
-	context RenderContext
+	context     RenderContext
+	frontmatter map[string]interface{}
 }
 
 // NewRenderer returns a new ANSIRenderer with style and options set.
@@ -38,6 +40,7 @@ func NewRenderer(options Options) *ANSIRenderer {
 // RegisterFuncs implements NodeRenderer.RegisterFuncs.
 func (r *ANSIRenderer) RegisterFuncs(reg renderer.NodeRendererFuncRegisterer) {
 	// blocks
+	reg.Register(localast.KindFrontmatter, r.handleFrontmatter)
 	reg.Register(ast.KindDocument, r.renderNode)
 	reg.Register(ast.KindHeading, r.renderNode)
 	reg.Register(ast.KindBlockquote, r.renderNode)
@@ -85,6 +88,18 @@ func (r *ANSIRenderer) RegisterFuncs(reg renderer.NodeRendererFuncRegisterer) {
 
 	// emoji
 	reg.Register(east.KindEmoji, r.renderNode)
+}
+
+func (r *ANSIRenderer) handleFrontmatter(w util.BufWriter, source []byte, node ast.Node, entering bool) (ast.WalkStatus, error) {
+	//if node, ok := node.(*localast.Frontmatter); ok && entering {
+	//	if node.Status == "" && node.MetaData != nil {
+	//		r.frontmatter = make(map[string]interface{}, len(node.MetaData))
+	//		for key, value := range node.MetaData {
+	//			r.frontmatter[fmt.Sprintf("%v", key)] = value
+	//		}
+	//	}
+	//}
+	return ast.WalkContinue, nil
 }
 
 func (r *ANSIRenderer) renderNode(w util.BufWriter, source []byte, node ast.Node, entering bool) (ast.WalkStatus, error) {
